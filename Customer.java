@@ -3,30 +3,12 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 class Customer {
-    private String _name;
-    private Vector _rentals = new Vector();
-    private double totalAmount = 0;
-    private int frequentRenterPoints = 0;
+     private String _name;
+    private Vector _rentals = new Vector();  
     
     public Customer(String name) {
         _name = name;
     };
-
-    public double getTotalAmount(){
-        return totalAmount;
-    }
-
-    public void setTotalAmount(double amount){
-        totalAmount = amount;
-    }
-
-    public int getFrequentRenterPoints(){
-        return frequentRenterPoints;
-    }
-
-    public void getFrequentRenterPoints(int points){
-        frequentRenterPoints = points;
-    }
 
     public void addRental(Rental arg) {
         _rentals.addElement(arg);
@@ -35,16 +17,10 @@ class Customer {
     public String getName (){
         return _name;
     }
-
-    public String getStatement() {
-        Enumeration rentals = _rentals.elements();
-        String result = "Rental Record for " + getName() + "\n";
-
-        while (rentals.hasMoreElements()) {
-            double thisAmount = 0;
-            Rental each = (Rental) rentals.nextElement();   
-            
-            // determine amounts for each line
+    
+    public int doCalculation(Rental each){ //new function added
+        int thisAmount = 0;
+        // determine amounts for each line
             switch (each.getMovie().getPriceCode()) {
                 case Movie.REGULAR:
                     thisAmount += 2;
@@ -60,6 +36,21 @@ class Customer {
                     thisAmount += (each.getDaysRented() - 3) * 1.5;
                     break;
             }
+            return thisAmount;
+    }
+    
+    
+    public String getStatement(){
+        double totalAmount = 0;
+        int frequentRenterPoints = 0;
+        Enumeration rentals = _rentals.elements();
+        String result = "Rental Record for " + getName() + "\n";
+
+        while (rentals.hasMoreElements()) {
+            double thisAmount = 0;
+            Rental each = (Rental) rentals.nextElement();   
+            
+            thisAmount = doCalculation(each); //called new function
 
             // add frequent renter points
             frequentRenterPoints++;
@@ -77,8 +68,7 @@ class Customer {
 
         // add footer lines
         result += "Amount owed is " + String.valueOf(totalAmount) + "\n";
-        result += "You earned " + String.valueOf(frequentRenterPoints) + "
-        frequent renter points";
+        result += "You earned " + String.valueOf(frequentRenterPoints) + " frequent renter points";
         return result;
     }
 };
